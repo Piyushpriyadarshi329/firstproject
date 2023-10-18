@@ -12,6 +12,8 @@ export default function Home() {
 
   const [price, setPrice] = useState(0);
 
+  const [cartItem, setCartItem] = useState([]);
+
   const [id, setId] = useState(1);
 
   // let product = [];
@@ -55,6 +57,67 @@ export default function Home() {
 
   // getData()
 
+
+
+  function fun1() {
+    try {
+      localStorage.setItem("userName","piyush")
+
+      console.log("cartitem", cartItem);
+    } catch (error) {
+      console.log("error", error);
+    }
+  }
+
+
+  async function getLocalData(){
+
+let userName= await localStorage.getItem("userName")
+
+console.log("userName",userName)
+  }
+
+  function addToCartFun(item) {
+    try {
+      console.log("cartItem", cartItem, item);
+
+      // cartItem.push()
+
+      setCartItem((prev) => {
+        console.log("prev", prev);
+
+        let filterItem = prev.filter((i) => i.id == item.id);
+
+        console.log("filterItem", filterItem);
+
+        if (filterItem.length > 0) {
+
+          let updatedItem = prev.map((i) => {
+            if (i.id == filterItem[0].id) {
+              return { ...i, qty: filterItem[0].qty + 1 };
+            } else {
+              return i;
+            }
+          });
+
+          console.log("updatedItem", updatedItem);
+
+          return updatedItem;
+
+
+        } else {
+          let newData = [...prev, { ...item, qty: 1 }];
+
+          console.log("newaData", newData);
+
+          return newData;
+        }
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
   return (
     <div>
       <h1 style={{ textAlign: "center" }}>Product</h1>
@@ -77,6 +140,9 @@ export default function Home() {
           </div>
         </div>
 
+        <button onClick={fun1}>View cart item</button>
+        <button onClick={getLocalData}>get localstorage data</button>
+
         {/* <input
           onChange={(e) => {
 
@@ -88,7 +154,7 @@ export default function Home() {
         /> */}
 
         {product.map((item, index) => {
-          console.log("item", index, item);
+          // console.log("item", index, item);
 
           return (
             <div
@@ -104,20 +170,43 @@ export default function Home() {
                 flexDirection: "row",
               }}
             >
-              <div style={{ flex: 1, }}>
+              <div style={{ flex: 1 }}>
                 <h4>Name:{item.title}</h4>
                 <h4>Brand:{item.brand}</h4>
                 <h4>Price:{item.price}</h4>
+                <button
+                  style={{
+                    backgroundColor: "dodgerblue",
+                    borderWidth: 0,
+                    borderRadius: 5,
+                  }}
+                  onClick={() => {
+                    addToCartFun(item);
+                  }}
+                >
+                  <p
+                    style={{ fontWeight: "bold", fontSize: 18, color: "white" }}
+                  >
+                    Add to cart
+                  </p>
+                </button>
               </div>
 
-              <div style={{ flex: 2,  }}>
+              <div style={{ flex: 2 }}>
                 {/* <p>image</p> */}
 
                 {item.images.map((img) => {
-                  return <img 
-                  
-                  style={{height:150,width:150,marginLeft:20,borderRadius:10}}
-                  src={img}></img>;
+                  return (
+                    <img
+                      style={{
+                        height: 150,
+                        width: 150,
+                        marginLeft: 20,
+                        borderRadius: 10,
+                      }}
+                      src={img}
+                    ></img>
+                  );
                 })}
               </div>
             </div>
